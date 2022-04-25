@@ -28,7 +28,6 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class TakePhoto:
     def __init__(self):
-
         self.bridge = CvBridge()
         self.image_received = False
 
@@ -41,20 +40,20 @@ class TakePhoto:
     def take_picture(self, img_title):
         if self.image_received:
             # Save an image
-	    print("taking image")
+            print("taking image")
             cv2.imwrite(img_title, self.image)
             return True
         else:
             return False
     
     def callback(self, data):
-        print("in callback")
+        #print("in callback")
         # Convert image to OpenCV format
         try:
             cv_image = self.bridge.compressed_imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
             print(e)
-	self.image_received = True
+        self.image_received = True
         self.image = cv_image
 
 if __name__ == '__main__':
@@ -62,23 +61,24 @@ if __name__ == '__main__':
     # Initialize
     rospy.init_node('take_photo', anonymous=False)
 
-
+    img_name=raw_input("Bitte geben sie den Namen der aufzunehmenden  Bilder ein")
+        
     # Take a photo
     i=0
     while (True):
+	print('pressa buton when ready to take a photo')        
+	useless=raw_input()
         camera = TakePhoto()
-     # Use '_image_title' parameter from command line
-    # Default value is 'photo.jpg'
-
-
-        img_title = rospy.get_param('~image_title', 'photo'+str(i)+'.jpg')
+	
+        #img_title = rospy.get_param('~image_title', 'photo'+str(i)+'.jpg')
+        img_title =  img_name+str(i)+'.jpg'
 
         if camera.take_picture(img_title):
             rospy.loginfo("Saved image " + img_title)
-    	else:
+        else:
             rospy.loginfo("No images received")
 
     # Sleep to give the last log messages time to be sent
-	i=i+1
-        rospy.sleep(0.5)
+        i=i+1
+        rospy.sleep(0.3)
 
